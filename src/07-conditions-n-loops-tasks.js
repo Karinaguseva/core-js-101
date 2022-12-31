@@ -164,9 +164,7 @@ function doRectanglesOverlap(rect1, rect2) {
  *
  */
 function isInsideCircle(circle, point) {
-  if (
-    (circle.center.x - point.x) ** 2 + (circle.center.y - point.y) ** 2 < circle.radius ** 2
-  ) {
+  if ((circle.center.x - point.x) ** 2 + (circle.center.y - point.y) ** 2 < circle.radius ** 2) {
     return true;
   }
   return false;
@@ -214,8 +212,14 @@ function findFirstSingleChar(str) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  let str = '';
+  str += isStartIncluded ? '[' : '(';
+  str += Math.min(a, b);
+  str += ', ';
+  str += Math.max(a, b);
+  str += isEndIncluded ? ']' : ')';
+  return str;
 }
 
 /**
@@ -292,7 +296,9 @@ function getDigitalRoot(num) {
   let sum = num;
   let arr = [];
   while (sum > 9) {
-    arr = String(sum).split('').map((el) => Number(el));
+    arr = String(sum)
+      .split('')
+      .map((el) => Number(el));
     sum = arr.reduce((acc, el) => acc + el);
   }
   return sum;
@@ -319,8 +325,37 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const stack = [];
+  for (let i = 0; i < str.length; i += 1) {
+    const x = str[i];
+    if (x === '(' || x === '[' || x === '{' || x === '<') {
+      stack.push(x);
+    } else {
+      if (stack.length === 0) return false;
+      let check;
+      switch (x) {
+        case ')':
+          check = stack.pop();
+          if (check === '{' || check === '[' || check === '<') return false;
+          break;
+
+        case '}':
+          check = stack.pop();
+          if (check === '(' || check === '[' || check === '<') return false;
+          break;
+
+        case ']':
+          check = stack.pop();
+          if (check === '(' || check === '{' || check === '<') return false;
+          break;
+        default:
+          check = stack.pop();
+          if (check === '(' || check === '{' || check === '[') return false;
+      }
+    }
+  }
+  return stack.length === 0;
 }
 
 /**
